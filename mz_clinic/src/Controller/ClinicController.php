@@ -36,7 +36,7 @@ class ClinicController extends ControllerBase
 
             if (!empty($content)) {
                 $data = json_decode($content, TRUE);
-                $crudService = \Drupal::service('api.crud');
+                $crudService = \Drupal::service('clinic.api');
 
                 // Valider le token
                 $user = $crudService->validateBearerToken($token);
@@ -59,7 +59,7 @@ class ClinicController extends ControllerBase
                             unset($consultationData["entity_type"]);
                             unset($consultationData["bundle"]);
 
-                            $consultation = \Drupal::service('crud')->save($entity_type, $bundle, $consultationData);
+                            $consultation = \Drupal::service('clinic.crud')->save($entity_type, $bundle, $consultationData);
                             
                             if (is_object($consultation)) {
                                 $consultationId = $consultation->id();
@@ -83,7 +83,7 @@ class ClinicController extends ControllerBase
                             unset($appointmentData["entity_type"]);
                             unset($appointmentData["bundle"]);
 
-                            $appointment = \Drupal::service('crud')->save($entity_type, $bundle, $appointmentData);
+                            $appointment = \Drupal::service('clinic.crud')->save($entity_type, $bundle, $appointmentData);
                             
                             if (is_object($appointment)) {
                                 $results['appointment'] = [
@@ -104,7 +104,7 @@ class ClinicController extends ControllerBase
                             unset($patientData["entity_type"]);
                             unset($patientData["bundle"]);
 
-                            $patient = \Drupal::service('crud')->save($entity_type, $bundle, $patientData);
+                            $patient = \Drupal::service('clinic.crud')->save($entity_type, $bundle, $patientData);
                             
                             if (is_object($patient)) {
                                 $results['patient'] = [
@@ -125,7 +125,7 @@ class ClinicController extends ControllerBase
                             unset($orderData["entity_type"]);
                             unset($orderData["bundle"]);
 
-                            $order = \Drupal::service('crud')->save($entity_type, $bundle, $orderData);
+                            $order = \Drupal::service('clinic.crud')->save($entity_type, $bundle, $orderData);
                             
                             if (is_object($order)) {
                                 $orderId = $order->id();
@@ -140,7 +140,7 @@ class ClinicController extends ControllerBase
                                     'field_commande_cons' => $orderId,
                                 ];
                                 
-                                \Drupal::service('crud')->save('node', 'consultations', $consultationUpdateData);
+                                \Drupal::service('clinic.crud')->save('node', 'consultations', $consultationUpdateData);
                                 
                                 $results['consultation_update'] = [
                                     'id' => $consultationId,
@@ -159,7 +159,7 @@ class ClinicController extends ControllerBase
                                     unset($invoiceData["entity_type"]);
                                     unset($invoiceData["bundle"]);
 
-                                    $invoice = \Drupal::service('crud')->save($entity_type, $bundle, $invoiceData);
+                                    $invoice = \Drupal::service('clinic.crud')->save($entity_type, $bundle, $invoiceData);
                                     
                                     if (is_object($invoice)) {
                                         $invoiceId = $invoice->id();
@@ -174,7 +174,7 @@ class ClinicController extends ControllerBase
                                             'field_facture' => $invoiceId,
                                         ];
 
-                                        \Drupal::service('crud')->save('node', 'commande', $orderUpdateData);
+                                        \Drupal::service('clinic.crud')->save('node', 'commande', $orderUpdateData);
                                         
                                         $results['order_update'] = [
                                             'id' => $orderId,
@@ -191,13 +191,13 @@ class ClinicController extends ControllerBase
                             
                             // Supprimer ancienne commande si existe
                             if (!empty($cleanupData['old_order_id'])) {
-                                \Drupal::service('crud')->delete('node', 'commande', $cleanupData['old_order_id']);
+                                \Drupal::service('clinic.crud')->delete('node', 'commande', $cleanupData['old_order_id']);
                                 $results['cleanup']['old_order_deleted'] = true;
                             }
                             
                             // Supprimer ancienne consultation si en mode édition
                             if (!empty($cleanupData['old_consultation_id']) && $cleanupData['old_consultation_id'] != $consultationId) {
-                                \Drupal::service('crud')->delete('node', 'consultations', $cleanupData['old_consultation_id']);
+                                \Drupal::service('clinic.crud')->delete('node', 'consultations', $cleanupData['old_consultation_id']);
                                 $results['cleanup']['old_consultation_deleted'] = true;
                             }
                         }
@@ -265,7 +265,7 @@ class ClinicController extends ControllerBase
 
             if (!empty($content)) {
                 $data = json_decode($content, TRUE);
-                $crudService = \Drupal::service('api.crud');
+                $crudService = \Drupal::service('clinic.api');
 
                 // Valider le token
                 $user = $crudService->validateBearerToken($token);
@@ -282,7 +282,7 @@ class ClinicController extends ControllerBase
                                 'field_consultation_status' => 'cancelled'
                             ];
                             
-                            \Drupal::service('crud')->save('node', 'consultations', $consultationData);
+                            \Drupal::service('clinic.crud')->save('node', 'consultations', $consultationData);
                             
                             $results['consultation'] = [
                                 'id' => $consultationId,
@@ -299,7 +299,7 @@ class ClinicController extends ControllerBase
                                 'field_status' => 'cancel'
                             ];
                             
-                            \Drupal::service('crud')->save('node', 'commande', $orderData);
+                            \Drupal::service('clinic.crud')->save('node', 'commande', $orderData);
                             
                             $results['order'] = [
                                 'id' => $orderId,
@@ -370,7 +370,7 @@ class ClinicController extends ControllerBase
 
             if (!empty($content)) {
                 $data = json_decode($content, TRUE);
-                $crudService = \Drupal::service('api.crud');
+                $crudService = \Drupal::service('clinic.api');
 
                 // Valider le token
                 $user = $crudService->validateBearerToken($token);
@@ -391,7 +391,7 @@ class ClinicController extends ControllerBase
                             unset($orderData["entity_type"]);
                             unset($orderData["bundle"]);
 
-                            $order = \Drupal::service('crud')->save($entity_type, $bundle, $orderData);
+                            $order = \Drupal::service('clinic.crud')->save($entity_type, $bundle, $orderData);
                             
                             if (is_object($order)) {
                                 $orderId = $order->id();
@@ -418,7 +418,7 @@ class ClinicController extends ControllerBase
                             unset($invoiceData["entity_type"]);
                             unset($invoiceData["bundle"]);
 
-                            $invoice = \Drupal::service('crud')->save($entity_type, $bundle, $invoiceData);
+                            $invoice = \Drupal::service('clinic.crud')->save($entity_type, $bundle, $invoiceData);
                             
                             if (is_object($invoice)) {
                                 $invoiceId = $invoice->id();
@@ -438,7 +438,7 @@ class ClinicController extends ControllerBase
                                 'field_facture' => $invoiceId,
                             ];
 
-                            \Drupal::service('crud')->save('node', 'commande', $orderUpdateData);
+                            \Drupal::service('clinic.crud')->save('node', 'commande', $orderUpdateData);
                             
                             $results['order_update'] = [
                                 'id' => $orderId,

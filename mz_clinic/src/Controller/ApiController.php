@@ -48,7 +48,7 @@ class ApiController extends ControllerBase
             return new JsonResponse(['status' => false, 'message' => 'Mot de passe incorrect'], 401);
         }
 
-        $token = \Drupal::service('api.crud')->generateBearerToken($user, 60);
+        $token = \Drupal::service('clinic.api')->generateBearerToken($user, 60);
 
         $response = new JsonResponse([
             'status' => true,
@@ -76,7 +76,7 @@ class ApiController extends ControllerBase
     {
         $token = $request->cookies->get('auth_token');
         if ($token) {
-            \Drupal::service('api.crud')->invalidateBearerToken($token);
+            \Drupal::service('clinic.api')->invalidateBearerToken($token);
         }
 
         $response = new JsonResponse(['status' => true, 'message' => 'Déconnexion réussie']);
@@ -95,7 +95,7 @@ class ApiController extends ControllerBase
             return new JsonResponse(['authenticated' => false, 'message' => 'Non authentifié'], 401);
         }
 
-        $user = \Drupal::service('api.crud')->validateBearerToken($token);
+        $user = \Drupal::service('clinic.api')->validateBearerToken($token);
 
         if ($user) {
             return new JsonResponse([
@@ -357,7 +357,7 @@ class ApiController extends ControllerBase
 
         unset($data['bundle'], $data['entity_type']);
 
-        $entity = \Drupal::service('crud')->save($entity_type, $bundle, $data);
+        $entity = \Drupal::service('clinic.crud')->save($entity_type, $bundle, $data);
 
         if (is_object($entity)) {
             return new JsonResponse(['item' => $entity->id(), 'status' => true], 200);
@@ -371,7 +371,7 @@ class ApiController extends ControllerBase
      */
     public function register(Request $request)
     {
-        $service = \Drupal::service('api.crud');
+        $service = \Drupal::service('clinic.api');
         $data    = json_decode($request->getContent(), TRUE);
 
         if (empty($data['name']) || empty($data['pass'])) {
@@ -420,7 +420,7 @@ class ApiController extends ControllerBase
             return [null, null, new JsonResponse(['message' => 'Non authentifié. Veuillez vous connecter.', 'status' => 'error'], 401)];
         }
 
-        $service = \Drupal::service('api.crud');
+        $service = \Drupal::service('clinic.api');
         $user    = $service->validateBearerToken($token);
 
         if (!$user) {

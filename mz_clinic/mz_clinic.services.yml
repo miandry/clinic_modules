@@ -1,4 +1,8 @@
 services:
-  mz_clinic.clinic_service:
-    class: Drupal\mz_clinic\ClinicService
+  clinic.api:
+    class: Drupal\mz_clinic\ClinicAPIService
+    arguments: []
+
+  clinic.crud:
+    class: Drupal\mz_clinic\ClinicCRUDService
     arguments: []
