@@ -1,3 +1,106 @@
+# ─── Auth & user management (migrated from mz_crud) ─────────────────────────
+
+mz_clinic.login:
+  path: "/api/clinic/crud/login"
+  defaults:
+    _controller: '\Drupal\mz_clinic\Controller\ApiController::login'
+    _title: "Login user"
+  methods: [POST]
+  requirements:
+    _access: "TRUE"
+  options:
+    no_cache: TRUE
+
+mz_clinic.logout:
+  path: "/api/clinic/crud/logout"
+  defaults:
+    _controller: '\Drupal\mz_clinic\Controller\ApiController::logout'
+    _title: "Logout user"
+  methods: [POST]
+  requirements:
+    _access: "TRUE"
+  options:
+    no_cache: TRUE
+
+mz_clinic.check_auth:
+  path: "/api/clinic/crud/check-auth"
+  defaults:
+    _controller: '\Drupal\mz_clinic\Controller\ApiController::checkAuth'
+    _title: "Check authentication"
+  methods: [GET]
+  requirements:
+    _access: "TRUE"
+  options:
+    no_cache: TRUE
+
+mz_clinic.create_user:
+  path: "/api/clinic/crud/create_user"
+  defaults:
+    _controller: '\Drupal\mz_clinic\Controller\ApiController::createUser'
+    _title: "Create user"
+  methods: [POST]
+  requirements:
+    _access: "TRUE"
+  options:
+    no_cache: TRUE
+
+mz_clinic.user_edit:
+  path: "/api/clinic/crud/user_edit"
+  defaults:
+    _controller: '\Drupal\mz_clinic\Controller\ApiController::userEdit'
+    _title: "Edit user"
+  methods: [POST]
+  requirements:
+    _access: "TRUE"
+  options:
+    no_cache: TRUE
+
+mz_clinic.user_delete:
+  path: "/api/clinic/crud/user_delete"
+  defaults:
+    _controller: '\Drupal\mz_clinic\Controller\ApiController::userDelete'
+    _title: "Delete user"
+  methods: [POST]
+  requirements:
+    _access: "TRUE"
+  options:
+    no_cache: TRUE
+
+mz_clinic.change_password:
+  path: "/api/clinic/crud/change-password"
+  defaults:
+    _controller: '\Drupal\mz_clinic\Controller\ApiController::changePassword'
+    _title: "Change password"
+  methods: [POST]
+  requirements:
+    _access: "TRUE"
+  options:
+    no_cache: TRUE
+
+mz_clinic.save:
+  path: "/api/clinic/crud/save"
+  defaults:
+    _controller: '\Drupal\mz_clinic\Controller\ApiController::save'
+    _title: "Save content"
+  methods: [POST]
+  requirements:
+    _access: "TRUE"
+  options:
+    no_cache: TRUE
+
+mz_clinic.register:
+  path: "/api/clinic/crud/register"
+  defaults:
+    _controller: '\Drupal\mz_clinic\Controller\ApiController::register'
+    _title: "Register user"
+  methods: [POST]
+  requirements:
+    _access: "TRUE"
+  options:
+    no_cache: TRUE
+
+# ─── Clinic-specific endpoints ───────────────────────────────────────────────
+
 mz_clinic.save_consultation:
   path: "/api/clinic/save-consultation"
   defaults:
