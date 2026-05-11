@@ -1,0 +1,6 @@
+services:
+  mz_api_security.event_subscriber:
+    class: Drupal\mz_api_security\EventSubscriber\MzApiSecuritySubscriber
+    arguments: ['@config.factory']
+    tags:
+      - { name: event_subscriber }

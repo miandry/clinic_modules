@@ -1,0 +1,62 @@
+rag_api.search_patients:
+  path: '/api/rag/patients'
+  methods: [GET, POST]
+  defaults:
+    _controller: '\Drupal\rag_api\Controller\RagController::searchPatients'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+rag_api.search_medications:
+  path: '/api/rag/medications'
+  methods: [GET, POST]
+  defaults:
+    _controller: '\Drupal\rag_api\Controller\RagController::searchMedications'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+rag_api.search_consultations:
+  path: '/api/rag/consultations'
+  methods: [GET, POST]
+  defaults:
+    _controller: '\Drupal\rag_api\Controller\RagController::searchConsultations'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+rag_api.search_sales:
+  path: '/api/rag/sales'
+  methods: [GET, POST]
+  defaults:
+    _controller: '\Drupal\rag_api\Controller\RagController::searchSales'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+rag_api.search_today:
+  path: '/api/rag/get-data'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\rag_api\Controller\RagController::searchWithPeriod'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+rag_api.rag_query:
+  path: '/api/rag/query'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\rag_api\Controller\RagController::ragQuery'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+rag_api.semantic_search:
+  path: '/api/rag/semantic'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\rag_api\Controller\RagController::semanticSearch'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'

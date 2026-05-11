@@ -1,0 +1,7 @@
+name: 'MZ Clinic'
+type: module
+description: 'Custom module for clinic consultation management'
+core_version_requirement: ^9 || ^10
+package: 'MZ'
+dependencies:
+  - mz_crud:mz_crud

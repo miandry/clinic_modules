@@ -1,0 +1,4 @@
+administer mz api security:
+  title: 'Administer MZ API Security'
+  description: 'Allow to configure API security settings'
+  restrict access: true

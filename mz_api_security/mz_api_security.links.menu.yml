@@ -1,0 +1,6 @@
+mz_api_security.settings:
+  title: 'MZ API Security'
+  description: 'Configure API security settings'
+  parent: system.admin_config_system
+  route_name: mz_api_security.settings
+  weight: 100

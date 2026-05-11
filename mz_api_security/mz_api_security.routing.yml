@@ -1,0 +1,7 @@
+mz_api_security.settings:
+  path: '/admin/config/system/mz-api-security'
+  defaults:
+    _form: '\Drupal\mz_api_security\Form\MzApiSecuritySettingsForm'
+    _title: 'MZ API Security Settings'
+  requirements:
+    _permission: 'administer mz api security'

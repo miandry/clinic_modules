@@ -1,0 +1,10 @@
+name: 'RAG API'
+type: module
+description: 'API endpoints for AI RAG (Retrieval-Augmented Generation) with direct MySQL access'
+core_version_requirement: ^9 || ^10
+package: Custom
+version: 1.0.0
+dependencies:
+  - node
+  - serialization
+  - rest

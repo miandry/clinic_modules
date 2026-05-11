@@ -1,0 +1,6 @@
+name: MZ API Security
+type: module
+description: 'Protège les routes API contre les accès depuis des domaines non autorisés'
+core_version_requirement: ^9 || ^10
+package: Custom
+configure: mz_api_security.settings

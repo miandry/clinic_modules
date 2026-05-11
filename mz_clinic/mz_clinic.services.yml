@@ -1,0 +1,4 @@
+services:
+  mz_clinic.clinic_service:
+    class: Drupal\mz_clinic\ClinicService
+    arguments: []

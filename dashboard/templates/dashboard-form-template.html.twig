@@ -1,0 +1,560 @@
+
+{% set user = current_user() %}
+{% if hasRole('administrator',user.uid) == false  and  hasRole('gerant',user.uid) == false %}
+{{ redirect('/admin/articles')}}
+{% endif %}
+
+{{ attach_library('myadmin/lib_dashboard') }}
+<style>
+	.top_vente {
+		font-size: 12px;
+		list-style: none;
+		text-align: left;
+	}
+	.top_vente li {
+		width: 100px; /* Adjust width as needed */
+		overflow: hidden;
+		white-space: nowrap;
+	}
+	.top_vent_card {
+		height: 115px;
+		overflow-y: scroll;
+	}
+  .dashboard_page .block-system > form {
+    border: none !important;
+    padding: 0!important;
+}
+.voir_plus_top_vente{
+      position: absolute;
+    right: 15px;
+    top: 25px;
+}
+</style>
+
+{% set valeur_stock =   form['#valuer_stock'] %}
+{% set top_vente =  form['#top_vente'] %}
+{% set bas_stock =   form['#bas_stock'] %}
+{% set rupture_stock =   form['#rupture_stock'] %}
+{% set dateProche =   form['#dateProche'] %}
+{% set total_vente_par_jour = form['#total_vente_par_jour'] %}
+{% set benefice = form['#benefice'] %}
+{% set venteParMois =  config('dashboard.list','venteParMois') %}
+{% set venteParAnnulle =  config('dashboard.list','venteParAnnulle') %}
+
+
+
+<div class="bg-gray-200 main-content container-fluid py-4 position-relative  h-100 ">
+	<h1>Dashboard </h1>  {{ form }}
+	<div class="row">
+		<div class="row col-md-9">
+			<div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+				<div class="card">
+					<div class="card-header p-3 pt-2">
+						<div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl  position-absolute">
+							<i class="material-icons opacity-10">payments</i>
+						</div>
+						<div class="text-end pt-1">
+							<p class="text-sm mb-0 text-capitalize">Total des ventes</p>
+							<h4 class="mb-0">{{price(total_vente_par_jour)}}
+								ar</h4>
+						</div>
+					</div>
+					<hr class="dark horizontal my-0">
+					<div class="card-footer p-3">
+						<p class="mb-0" style="font-size: 14px;">
+							<i>Total des ventes aujourd'hui</i>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+				<div class="card">
+					<div class="card-header p-3 pt-2">
+						<div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl  position-absolute">
+							<i class="material-icons opacity-10">shopping_bag</i>
+						</div>
+						<div class="text-end pt-1">
+							<p class="text-sm mb-0 text-capitalize">Bénéfice</p>
+							<h4 class="mb-0">{{price(benefice)}}
+								ar</h4>
+						</div>
+					</div>
+					<hr class="dark horizontal my-0">
+					<div class="card-footer p-3">
+						<p class="mb-0" style="font-size: 14px;">
+							<i>Total des bénéfices aujourd'hui</i>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+				<div class="card">
+					<div class="card-header p-3 pt-2">
+						<div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl  position-absolute">
+							<i class="material-icons opacity-10">inventory</i>
+						</div>
+						<div class="text-end pt-1">
+							<p class="text-sm mb-0 text-capitalize">Valeur du stock</p>
+							<h4 class="mb-0">{{price(valeur_stock)}}
+								ar</h4>
+						</div>
+					</div>
+					<hr class="dark horizontal my-0">
+					<div class="card-footer p-3">
+						<p class="mb-0" style="font-size: 14px;">
+							<i>Total vente des stocks</i>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-xl-4 col-sm-6 mt-3">
+				<div class="card">
+					<div class="card-header p-3 pt-2">
+						<div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl  position-absolute">
+							<i class="material-icons opacity-10">menu</i>
+						</div>
+						<div class="text-end pt-1">
+							<a target="_blank" href="/stockbas">
+								<p class="text-sm mb-0 text-capitalize">Stock bas</p>
+								<h4 class="mb-0">{{bas_stock}}
+									articles</h4>
+							</a>
+						</div>
+					</div>
+					<hr class="dark horizontal my-0">
+					<div class="card-footer p-3">
+						<a target="_blank" href="/stockbas">
+							<p class="mb-0" style="font-size: 14px;">
+								<i>Cliquez ici pour voir la liste</i>
+							</p>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-xl-4 col-sm-6 mt-3">
+				<div class="card">
+					<div class="card-header p-3 pt-2">
+						<div class="icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl  position-absolute">
+							<i class="material-icons opacity-10">event</i>
+						</div>
+						<div class="text-end pt-1">
+							<p class="text-sm mb-0 text-capitalize">Date proche</p>
+							<h4 class="mb-0">{{dateProche|length}}
+								articles</h4>
+						</div>
+					</div>
+					<hr class="dark horizontal my-0">
+					<div class="card-footer p-3">
+						<p class="mb-0" style="font-size: 14px;">
+							<i>Articles périmés dans moins de 10 jours</i>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-xl-4 col-sm-6 mt-3">
+				<div class="card">
+					<div class="card-header p-3 pt-2">
+						<div class="icon icon-lg icon-shape bg-gradient-danger shadow-danger text-center border-radius-xl  position-absolute">
+							<i class="material-icons opacity-10">error</i>
+						</div>
+						<div class="text-end pt-1">
+							<p class="text-sm mb-0 text-capitalize">Rupture de stock</p>
+							<h4 class="mb-0">{{rupture_stock}}
+								articles</h4>
+						</div>
+					</div>
+					<hr class="dark horizontal my-0">
+					<div class="card-footer p-3">
+						<p class="mb-0" style="font-size: 14px;">
+							<i>Articles en rupture de stock</i>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="card h-100">
+				<div class="card-header pb-0">
+					<h6>Top vente ce mois</h6>
+          <a target="_blank" class="voir_plus_top_vente" href="/admin/dashboard/topvente"> Voir Plus</a>
+					<p class="text-sm">
+						<i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
+					</p>
+				</div>
+				<div class="top_vent_card card-body p-3">
+					<div class="timeline timeline-one-side">
+							{% for key,item in top_vente %}
+                    {% set n = node_parser(item.article_nid) %}
+							<div class="timeline-block mb-3">
+								<span class="timeline-step">
+									<i class="material-icons text-danger text-gradient">code</i>
+								</span>
+								<div class="timeline-content">
+									<h6 class="text-dark text-sm font-weight-bold mb-0">{{n.title}}
+										- Vendus :
+										{{item.total_quantity}}
+										unités
+									</h6>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-lg-6 col-md-6 mt-4 mb-4">
+			<div class="card z-index-2 ">
+				<div class="card-header p-0 position-relative  mx-3 z-index-2 bg-transparent">
+					<div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+						<div class="chart">
+							<canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					<h6 class="mb-0 ">Historique des ventes et des achats de l'année</h6>
+					<p class="text-sm ">Comparer les achat et ventes pour {{ "now"|date("Y") }}
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-6 col-md-6 mt-4 mb-4">
+			<div class="card z-index-2  ">
+				<div class="card-header p-0 position-relative  mx-3 z-index-2 bg-transparent">
+					<div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1">
+						<div class="chart">
+							<canvas id="chart-line" class="chart-canvas" height="170"></canvas>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					<h6 class="mb-0 ">
+						Ventes quotidiennes pour {{ "now"|date("F Y") }}
+					</h6>
+					<p class="text-sm ">
+						suivre l'evolution de votre commande.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{#<div class="container my-5 px-5 shadow">
+  <h1>Dashboard</h1>
+  <div class="row text-center mt-5">
+    <div class="col">
+      <div class="row border border-2 rounded">
+        <h4>TOTAL DES VENTES</h4>
+        <h5>{{price(total_vente_par_mois)}} AR</h5>
+        #}
+{# <canvas id="pieChart"></canvas> #}
+{#
+      </div>
+      <div class="row border border-2 rounded mt-5">
+        <h4>DATE PROCHE</h4>
+        <h5>{{dateProche|length}} ARTICLES</h5>
+      </div>
+      <div class="row border border-2 rounded">
+        <h4>TOP VENTE CE MOIS</h4>
+        <ul class="top_vente">
+        	{% for key,item in top_vente %}
+            <li>{{item.num}} - {{item.name}} </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="row">
+        <div class="col-md-3 border border-2 rounded">
+          <h4>TOTAL DES ACHATS</h4>
+          <h5>{{price(totalAchatParMois)}} AR</h5>
+        </div>
+        <div class="col-md-3 border border-2 rounded">
+          <h4>VALEUR DU STOCK</h4>
+          <h5>{{price(valeur_stock)}} AR</h5>
+        </div>
+        <div class="col-md-3 border border-2 rounded">
+          <h4>STOCK BAS</h4>
+          <h5>{{bas_stock}} ARTICLES</h5>
+        </div>
+        <div class="col-md-3 border border-2 rounded">
+          <h4>RUPTURE DE STOCK</h4>
+          <h5>{{rupture_stock}} ARTICLES</h5>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <canvas id="monthChart"></canvas>
+      </div>
+      <div class="row mt-4">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+    <div class="col">
+
+    </div>
+  </div>
+</div>#}
+
+ <script>
+ 
+
+  const plugin = {
+    id: 'customCanvasBackgroundColor',
+    beforeDraw: (chart, args, options) => {
+      const {ctx} = chart;
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-over';
+      ctx.fillStyle = options.color || '#fff';
+      ctx.fillRect(0, 0, chart.width, chart.height);
+      ctx.restore();
+    }
+  };
+
+  const vente = [];
+    {% for v in venteParMois %}
+    vente.push({{v}});
+    {% endfor %}
+
+  var myMonthChart = new Chart(document.getElementById("monthChart"), {
+    type : 'line',
+    data : {
+      labels : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      datasets : [ {
+        label: 'Vente en ariary',
+        borderColor: '#fff',
+        backgroundColor : '#fff',
+        data : vente
+      } ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false,
+        },
+        title: {
+          display: true,
+          text: "Evolution des ventes du mois",
+          size: 24,
+          color: '#fff',
+        },
+        customCanvasBackgroundColor: {
+          color: 'rgb(35,35,35)',
+        }
+      },
+      scales:{
+        y:{
+          border: {
+            display: false
+          },
+          grid: {
+            color: '#fff'
+          },
+          ticks: {
+            color: '#fff'
+          }
+        },
+        x:{
+          ticks: {
+            color: '#fff'
+          }
+        }
+      },
+    },
+    plugins: [plugin],
+  });
+
+
+</script>
+ <script>
+
+  const venteChart = [];
+  const achatChart = [];
+    {% for v in venteParAnnulle.vente %}
+    venteChart.push({{v}});
+    {% endfor %}
+    {% for a in venteParAnnulle.achat %}
+    achatChart.push({{a}});
+    {% endfor %}
+
+  var ctx = document.getElementById("chart-bars").getContext("2d");
+
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ['JAN','FEV','MAR','AVR','MAI','JUN','JUI','AOU','SEP','OCT','NOV','DEC'],
+      datasets: [{
+        label: "Ventes",
+        tension: 0.4,
+        borderWidth: 0,
+        borderRadius: 4,
+        borderSkipped: false,
+        backgroundColor: "rgba(255, 255, 255, .8)",
+        data: venteChart,
+        maxBarThickness: 6
+      },
+       {
+          label: 'Achat',
+          tension: 0.4,
+          borderWidth: 0,
+          borderRadius: 4,
+          borderSkipped: false,
+          backgroundColor : 'rgba(26,115,232,1)',
+          data: achatChart,
+          maxBarThickness: 6
+        }
+       ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'index',
+      },
+      scales: {
+        y: {
+          grid: {
+            drawBorder: false,
+            display: true,
+            drawOnChartArea: true,
+            drawTicks: false,
+            borderDash: [5, 5],
+            color: 'rgba(255, 255, 255, .2)'
+          },
+          ticks: {
+            suggestedMin: 0,
+            suggestedMax: 500,
+            beginAtZero: true,
+            padding: 10,
+            font: {
+              size: 14,
+              weight: 300,
+              family: "Roboto",
+              style: 'normal',
+              lineHeight: 2
+            },
+            color: "#fff"
+          },
+        },
+        x: {
+          grid: {
+            drawBorder: false,
+            display: true,
+            drawOnChartArea: true,
+            drawTicks: false,
+            borderDash: [5, 5],
+            color: 'rgba(255, 255, 255, .2)'
+          },
+          ticks: {
+            display: true,
+            color: '#f8f9fa',
+            padding: 10,
+            font: {
+              size: 14,
+              weight: 300,
+              family: "Roboto",
+              style: 'normal',
+              lineHeight: 2
+            },
+          }
+        },
+      },
+    },
+  });
+
+  var ctx2 = document.getElementById("chart-line").getContext("2d");
+  const vente1 = [];
+    {% for v in venteParMois %}
+    vente1.push({{v}});
+   {% endfor %}
+  new Chart(ctx2, {
+    type: "line",
+    data: {
+      labels : [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+      datasets: [{
+        label: "Vente par jour",
+        tension: 0,
+        borderWidth: 0,
+        pointRadius: 5,
+        pointBackgroundColor: "rgba(255, 255, 255, .8)",
+        pointBorderColor: "transparent",
+        borderColor: "rgba(255, 255, 255, .8)",
+        borderColor: "rgba(255, 255, 255, .8)",
+        borderWidth: 4,
+        backgroundColor: "transparent",
+        fill: true,
+        data: vente,
+        maxBarThickness: 6
+
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        }
+      },
+      interaction: {
+        intersect: false,
+        mode: 'index',
+      },
+      scales: {
+        y: {
+          grid: {
+            drawBorder: false,
+            display: true,
+            drawOnChartArea: true,
+            drawTicks: false,
+            borderDash: [5, 5],
+            color: 'rgba(255, 255, 255, .2)'
+          },
+          ticks: {
+            display: true,
+            color: '#f8f9fa',
+            padding: 10,
+            font: {
+              size: 14,
+              weight: 300,
+              family: "Roboto",
+              style: 'normal',
+              lineHeight: 2
+            },
+          }
+        },
+        x: {
+          grid: {
+            drawBorder: false,
+            display: false,
+            drawOnChartArea: false,
+            drawTicks: false,
+            borderDash: [5, 5]
+          },
+          ticks: {
+            display: true,
+            color: '#f8f9fa',
+            padding: 10,
+            font: {
+              size: 14,
+              weight: 300,
+              family: "Roboto",
+              style: 'normal',
+              lineHeight: 2
+            },
+          }
+        },
+      },
+    },
+  });
+
+</script>

@@ -1,0 +1,56 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.css">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.10.21/tableExport.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.1/dist/extensions/export/bootstrap-table-export.min.js"></script>
+
+{% set myfilter =  items.filter  %}
+<form class="row">
+  <div class="mb-3 col-2">
+    <label for="exampleInputEmail1" class="form-label">Date start</label>
+    <input type="text" class="form-control" value="{{myfilter.date_start}}" name="date_start" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+ <div class="mb-3 col-2">
+    <label for="exampleInputEmail1" class="form-label">Date end</label>
+    <input type="text" class="form-control" name="date_end" value="{{myfilter.date_end}}" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+   <div class="mb-3 col-2">
+    <label for="exampleInputEmail1" class="form-label">Article Id</label>
+    <input type="text" class="form-control"  value="{{myfilter.article_id}}" name="article_id" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+   <div class="mb-3">
+  <button type="submit" class="btn btn-primary col-4">Recherche</button>
+  </div>
+</form>
+<table  id="table"
+    data-pagination="false"
+    data-page-list="[10, 25, 50, 100, ALL]"
+    data-export-types="['csv']" data-show-export="true" data-toggle="table" >
+  <thead>
+    <tr>
+      <th>Article ID</th>
+      <th>Nom article</th>
+      <th>Total quantite vendu</th>
+      <th>Total montant (AR) </th>
+      <th>Nombre des article vendus </th>
+    </tr>
+  </thead>
+  <tbody>
+        {% for item in items.data %}
+          <tr>
+            <td>{{item.article_nid}}</td>
+      <td>{{item.title}}</td>
+      <td>{{item.total_quantity}}</td>
+             <td>{{item.total_vente}}</td>
+            <td>{{item.repeat_count}}</td>
+      </tr>
+
+    {% endfor %}
+  
+  </tbody>
+</table>
+
