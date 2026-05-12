@@ -2,7 +2,7 @@
 
 namespace Drupal\mz_clinic;
 
-use Drupal\Core\File\FileSystemInterface;
+use Drupal\entity_parser\UtilityParser;
 
 /**
  * Full CRUD service with typed-field handlers.
@@ -47,9 +47,15 @@ class ClinicCRUDService extends ClinicCRUDBaseService
                         $field_images[] = $result;
                     }
                 } elseif (is_array($image)) {
-                    $image_url = isset($image['uri']) ? file_create_url($image['uri']) : ($image['url'] ?? null);
-                    if ($image_url) {
-                        $result = $this->saveImgFile($entity_parent, $field_name, $image_url, $image);
+                    // Prefer stream URI (same as EntityParser::image_file) so file_get_contents works.
+                    $source = null;
+                    if (!empty($image['uri']) && is_string($image['uri'])) {
+                        $source = $image['uri'];
+                    } elseif (!empty($image['url']) && is_string($image['url'])) {
+                        $source = $image['url'];
+                    }
+                    if ($source) {
+                        $result = $this->saveImgFile($entity_parent, $field_name, $source, $image);
                         if ($result !== null) {
                             $field_images[] = $result;
                         }
@@ -63,72 +69,12 @@ class ClinicCRUDService extends ClinicCRUDBaseService
         return $entity_parent;
     }
 
+    /**
+     * Persists image bytes using entity_parser's UtilityParser (same rules as image_file).
+     */
     public function saveImgFile($entity_parent, $field_image, $field_value, $array = [])
     {
-        $file_system = \Drupal::service('file_system');
-        $logger      = \Drupal::logger('mz_clinic');
-
-        if (is_string($field_value) && strpos($field_value, 'data:image/') === 0) {
-            if (!preg_match('/^data:image\/(\w+);base64,/i', $field_value, $matches)) {
-                $logger->error('saveImgFile: format base64 invalide — @start', [
-                    '@start' => substr($field_value, 0, 60),
-                ]);
-                return null;
-            }
-            $extension  = strtolower($matches[1]);
-            $base64Part = substr($field_value, strpos($field_value, ',') + 1);
-            $data       = base64_decode($base64Part, true);
-            if ($data === false || strlen($data) === 0) {
-                $logger->error('saveImgFile: base64_decode échoué (longueur entrée: @len)', [
-                    '@len' => strlen($base64Part),
-                ]);
-                return null;
-            }
-            $filename = 'img_' . uniqid() . '.' . $extension;
-        } else {
-            $parts    = explode('/', $field_value);
-            $filename = end($parts) ?: ('img_' . uniqid());
-            $data     = @file_get_contents($field_value);
-            if ($data === false || strlen($data) === 0) {
-                $logger->error('saveImgFile: lecture fichier distant échouée @url', ['@url' => $field_value]);
-                return null;
-            }
-        }
-
-        $setting        = $entity_parent->get($field_image)->getSettings();
-        $file_directory = !empty($setting['file_directory']) ? $setting['file_directory'] : 'articles';
-        $path_root      = 'public://' . $file_directory . '/';
-        $path_root      = \Drupal::token()->replace($path_root);
-
-        $logger->info('saveImgFile: sauvegarde dans @path (fichier: @file, @size octets)', [
-            '@path' => $path_root,
-            '@file' => $filename,
-            '@size' => strlen($data),
-        ]);
-
-        if (!$file_system->prepareDirectory($path_root, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
-            $logger->error('saveImgFile: impossible de préparer le répertoire @path', ['@path' => $path_root]);
-            return null;
-        }
-
-        $file = file_save_data($data, $path_root . $filename, FileSystemInterface::EXISTS_RENAME);
-        if (!$file) {
-            $logger->error('saveImgFile: file_save_data échoué pour @path@file', [
-                '@path' => $path_root,
-                '@file' => $filename,
-            ]);
-            return null;
-        }
-
-        $file->setPermanent();
-        $file->save();
-        $logger->info('saveImgFile: succès fid=@fid', ['@fid' => $file->id()]);
-
-        return [
-            'target_id' => $file->id(),
-            'alt'       => $array['alt'] ?? '',
-            'title'     => $array['title'] ?? '',
-        ];
+        return UtilityParser::saveImageToField($entity_parent, $field_image, $field_value, $array);
     }
 
     public function entity_reference_revisions($entity_parent, $field_name, $field_value)
